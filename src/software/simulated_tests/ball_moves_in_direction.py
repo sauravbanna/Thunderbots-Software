@@ -19,11 +19,10 @@ class BallMovesForward(Validation):
                           to account for noisy world data
         """
         self.last_ball_position = initial_ball_position
-        self.max_displacement_so_far = None
         self.tolerance = tolerance
 
     def get_validation_status(self, world) -> ValidationStatus:
-        """Checks if ball is moving forward
+        """Checks if ball is moving forward, i.e. in the +x direction
 
         :param world: The world msg to validate
         :returns: FAILING if ball doesn't move in the direction
@@ -31,17 +30,15 @@ class BallMovesForward(Validation):
         """
         current_ball_position = world.ball.current_state.global_position.x_meters
 
-        # if max displacement is not set or current ball is moving in the right direction
-        # set it and return PASSING
-        if self.max_displacement_so_far is None or (
-            self.moving_in_pos_x
-            and current_ball_position > self.max_displacement_so_far - self.tolerance
-        ):
-            self.max_displacement_so_far = current_ball_position
+        # if current ball is moving in the right direction (within a tolerance) 
+        # return PASSING
+        if current_ball_position.x() > self.last_ball_position.x() - self.tolerance:
             return ValidationStatus.PASSING
+        
+        self.last_ball_position = current_ball_position
 
-        # if max displacement is set and current ball is in the wrong direction too far
-        # beyond a threshold, return FAILING
+        # if current ball is in the wrong direction too far beyond a threshold, 
+        # return FAILING
         return ValidationStatus.FAILING
 
     def get_validation_geometry(self, world) -> ValidationGeometry:
@@ -96,7 +93,7 @@ class BallMovesForwardInRegions(BallMovesForward):
         """
         (override) Shows the last ball position line, and the regions the ball should be moving in
         """
-        return create_validation_geometry(self.regions)
+        return super().get_validation_geometry(world) + create_validation_geometry(self.regions)
 
     def __repr__(self):
         return (

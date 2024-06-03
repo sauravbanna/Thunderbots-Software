@@ -107,7 +107,6 @@ py_library(
     srcs = [
         "avoid_collisions.py",
         "ball_enters_region.py",
-        "ball_moves_forward.py",
         "ball_moves_from_rest.py",
         "ball_moves_in_direction.py",
         "ball_speed_threshold.py",
