@@ -1,0 +1,16 @@
+(
+    # friendly positions
+    [
+        {% for robot in friendly_robots %}
+        tbots_cpp.Point({{ robot.global_position.x_meters }}, {{ robot.global_position.y_meters }})
+    ],
+    # enemy positions
+    [
+        {% for robot in enemy_robots %}
+        tbots_cpp.Point({{ robot.global_position.x_meters }}, {{ robot.global_position.y_meters }})
+    ],
+    # ball position
+    tbots_cpp.Point({{ ball_pos.x }}, {{ case.ball_pos.y }}),
+    # ball velocity
+    tbots_cpp.Vector({{ ball_vel.x }}, {{ case.ball_vel.y }}),
+),

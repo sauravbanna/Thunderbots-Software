@@ -1,6 +1,6 @@
 import os
 from pyqtgraph.Qt.QtWidgets import *
-from software.thunderscope.gl.sandbox.test_gen.utils import get_test_method_names
+from software.thunderscope.gl.sandbox.test_gen.test_editor import TestEditor
 
 
 class GLExportPytest(QWidget):
@@ -18,6 +18,7 @@ class GLExportPytest(QWidget):
 
         self._has_test_file = False
         self._has_test_name = False
+        self._is_new_file = False
 
         # Current Test File row
         test_file_row = QHBoxLayout()
@@ -66,6 +67,7 @@ class GLExportPytest(QWidget):
 
         self.add_test_case_button = QPushButton("Add Test Case")
         self.add_test_case_button.setEnabled(False)
+        self.add_test_case_button.clicked.connect(self._on_add_test_case)
         self.layout().addWidget(self.add_test_case_button)
 
     def _on_test_combo_changed(self, index: int) -> None:
@@ -87,6 +89,30 @@ class GLExportPytest(QWidget):
         self._has_test_name = bool(text.strip())
         self._update_add_test_case_state()
 
+    def _on_add_test_case(self) -> None:
+        """Handle the Add Test Case button click."""
+        test_name = self._get_active_test_name()
+        if not test_name or not self._current_test_file_path:
+            return
+
+        editor = TestEditor(
+            test_file_path=self._current_test_file_path,
+            test_name=test_name,
+            is_new_case=self._is_new_file,
+        )
+        editor.execute()
+
+    def _get_active_test_name(self) -> str | None:
+        """Get the currently active test name, either from the dropdown
+        selection or the new test name text field.
+
+        :return: the test name, or None if neither is available
+        """
+        if self.current_test_combo.currentText() != self.ADD_NEW_TEST_TEXT:
+            return self.current_test_combo.currentText()
+        text = self.new_test_name_edit.text().strip()
+        return text if text else None
+
     def _update_add_test_case_state(self) -> None:
         """Enable or disable 'Add Test Case' based on whether both
         a test file and a test name are available.
@@ -103,6 +129,7 @@ class GLExportPytest(QWidget):
 
         self._current_test_file_path = file_path
         self._has_test_file = True
+        self._is_new_file = not os.path.exists(file_path)
         self.current_test_file_label.setText(os.path.basename(file_path))
         self.current_test_file_label.setStyleSheet("color: #fff;")
         if os.path.exists(file_path):
@@ -112,6 +139,7 @@ class GLExportPytest(QWidget):
         self._update_add_test_case_state()
 
     def _initialize_test_name_dropdown(self) -> None:
+        """Reset the test name dropdown to its default state."""
         self.current_test_combo.clear()
         self.current_test_combo.addItem(self.ADD_NEW_TEST_TEXT)
         self.current_test_combo.setStyleSheet("color: #aaa;")
@@ -125,7 +153,7 @@ class GLExportPytest(QWidget):
         self.current_test_combo.clear()
         self.current_test_combo.addItem(self.ADD_NEW_TEST_TEXT)
         try:
-            test_names = get_test_method_names(file_path)
+            test_names = TestEditor.get_test_method_names(file_path)
             if test_names:
                 self.current_test_combo.addItems(test_names)
                 self.current_test_combo.setStyleSheet("color: #fff;")
