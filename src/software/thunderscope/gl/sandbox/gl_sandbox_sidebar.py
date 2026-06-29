@@ -4,6 +4,8 @@ from pyqtgraph.Qt.QtWidgets import *
 
 import qtawesome as qta
 from software.thunderscope.common.common_widgets import ToggleableButton
+from software.thunderscope.gl.sandbox.gl_export_pytest import GLExportPytest
+
 
 class GLSandboxSidebar(QWidget):
     """Sidebar widget for the sandbox mode
@@ -79,7 +81,7 @@ class GLSandboxSidebar(QWidget):
         self.layout().addWidget(self.clear_field_button)
 
         # Setup Create new Test button
-        self.create_test_button = ToggleableButton(False)
+        self.create_test_button = GLExportPytest()
         self.create_test_button.setToolTip("Create new Test")
         self.create_test_button.setIcon(
             qta.icon("mdi6.flask-outline", color=self.BUTTON_ICON_COLOR)
