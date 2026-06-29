@@ -78,21 +78,9 @@ class GLSandboxSidebar(QWidget):
         )
         self.layout().addWidget(self.clear_field_button)
 
-        # Setup Create new Test button
-        self.create_test_button = GLExportPytest()
-        self.create_test_button.setToolTip("Create new Test")
-        self.create_test_button.setIcon(
-            qta.icon("mdi6.flask-outline", color=self.BUTTON_ICON_COLOR)
-        )
-        self.layout().addWidget(self.create_test_button)
-
-        # Setup Add Case to Existing Test button
-        self.add_case_button = ToggleableButton(False)
-        self.add_case_button.setToolTip("Add Case to Existing Test")
-        self.add_case_button.setIcon(
-            qta.icon("mdi6.test-tube", color=self.BUTTON_ICON_COLOR)
-        )
-        self.layout().addWidget(self.add_case_button)
+        # Setup Export Pytest widget
+        self.export_pytest_widget = GLExportPytest()
+        self.layout().addWidget(self.export_pytest_widget)
 
         self.layout().addStretch()
 
