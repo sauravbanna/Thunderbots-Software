@@ -43,9 +43,7 @@ class GLExportPytest(QWidget):
         test_row.addWidget(QLabel("Current Test:"))
 
         self.current_test_combo = QComboBox()
-        self.current_test_combo.currentIndexChanged.connect(
-            self._on_test_combo_changed
-        )
+        self.current_test_combo.currentIndexChanged.connect(self._on_test_combo_changed)
         self._initialize_test_name_dropdown()
         test_row.addWidget(self.current_test_combo)
         test_row.addStretch()

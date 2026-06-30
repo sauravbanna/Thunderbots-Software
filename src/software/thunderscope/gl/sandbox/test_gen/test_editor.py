@@ -54,8 +54,7 @@ class TestEditor:
 
     @staticmethod
     def get_test_method_names(file_path: str) -> list[str]:
-        """
-        Parses a Python file and returns the names of all top-level functions
+        """Parses a Python file and returns the names of all top-level functions
         whose name starts with ``test_``.
 
         :param file_path: Path to the Python file to scan.
@@ -82,8 +81,7 @@ class TestEditor:
         return test_method_names
 
     def _render_template(self, template_path: str, **kwargs) -> str:
-        """
-        Reads a jinja template file from disk, renders it with the provided
+        """Reads a jinja template file from disk, renders it with the provided
         keyword arguments, and returns the completed string.
 
         :param template_path: Path to the .jinja or .txt template file.
@@ -115,8 +113,7 @@ class TestEditor:
         """
 
         def __init__(self, test_name: str, test_case_to_add: cst.Tuple):
-            """
-            :param test_name: The name of the test function to modify.
+            """:param test_name: The name of the test function to modify.
             :param test_case_to_add: A CST Tuple node to append to the
                 parametrize decorator's argument list.
             """
@@ -137,9 +134,7 @@ class TestEditor:
                     isinstance(decorator.expression, cst.Call)
                     and cst.matchers.matches(
                         decorator.expression.func,
-                        cst.matchers.Attribute(
-                            attr=cst.matchers.Name("parametrize")
-                        ),
+                        cst.matchers.Attribute(attr=cst.matchers.Name("parametrize")),
                     )
                 ):
                     continue
@@ -179,8 +174,7 @@ class TestEditor:
         template_path: str,
         template_args: dict,
     ):
-        """
-        Renders a Jinja template test case and injects it into the
+        """Renders a Jinja template test case and injects it into the
         ``@pytest.mark.parametrize`` block of a specific top-level test function.
 
         :param test_file_path: Path to the Python test file to modify.
@@ -192,9 +186,7 @@ class TestEditor:
         """
         file_path = pathlib.Path(test_file_path)
         if not file_path.exists():
-            raise FileNotFoundError(
-                f"Python test file not found at {test_file_path}"
-            )
+            raise FileNotFoundError(f"Python test file not found at {test_file_path}")
 
         # render the template with the args
         rendered_case_str = self._render_template(template_path, **template_args)

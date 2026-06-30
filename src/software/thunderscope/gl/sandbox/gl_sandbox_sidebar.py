@@ -37,8 +37,7 @@ class GLSandboxSidebar(QWidget):
 
         # Style with a dark background so it's visible when overlaying
         self.setStyleSheet(
-            "background-color: rgba(30, 30, 30, 220);"
-            "border-left: 1px solid #555;"
+            "background-color: rgba(30, 30, 30, 220);" "border-left: 1px solid #555;"
         )
 
         # Setup sandbox mode toggle checkbox
