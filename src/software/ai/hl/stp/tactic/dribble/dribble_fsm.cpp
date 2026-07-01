@@ -157,25 +157,6 @@ void DribbleFSM::dribble(const Update& event)
         AutoChipOrKick{AutoChipOrKickMode::OFF, 0}));
 }
 
-void DribbleFSM::loseBall(const Update& event)
-{
-    Point ball_position = event.common.world_ptr->ball().position();
-
-    Angle face_ball_orientation =
-        (ball_position - event.common.robot.position()).orientation();
-
-    Point away_from_ball_position = robotPositionToFaceBall(
-        ball_position, face_ball_orientation,
-        ai_config_ptr->dribble_tactic_config().lose_ball_possession_threshold() * 2);
-
-    event.common.set_primitive(std::make_unique<MovePrimitive>(
-        event.common.robot, away_from_ball_position, face_ball_orientation,
-        TbotsProto::MaxAllowedSpeedMode::PHYSICAL_LIMIT,
-        TbotsProto::ObstacleAvoidanceMode::AGGRESSIVE, TbotsProto::DribblerMode::OFF,
-        TbotsProto::BallCollisionType::AVOID,
-        AutoChipOrKick{AutoChipOrKickMode::OFF, 0}));
-}
-
 bool DribbleFSM::havePossession(const Update& event)
 {
     return event.common.robot.isNearDribbler(event.common.world_ptr->ball().position());

@@ -12,7 +12,7 @@
  * it simply tries to move to the best position to take the pass as fast as possible
  */
 class AttackerTactic
-    : public TacticBase<AttackerFSM, DribbleFSM, PivotKickFSM, KeepAwayFSM>
+    : public TacticBase<AttackerFSM, DribbleFSM, LoseBallFSM, FakePivotKickFSM, KeepAwayFSM>
 {
    public:
     /**

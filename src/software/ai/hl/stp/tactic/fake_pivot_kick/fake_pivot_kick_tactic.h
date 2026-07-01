@@ -7,19 +7,21 @@
 #include "software/geom/segment.h"
 
 /**
- * This tactic is for turning aiming and kicking.
+ * This tactic is for faking a pivot kick by moving toward the ball and pulling back
+ * without actually kicking.
  */
-class PivotKickTactic : public TacticBase<PivotKickFSM, DribbleFSM, LoseBallFSM>
+class FakePivotKickTactic : public TacticBase<PivotKickFSM, DribbleFSM>
 {
    public:
     /**
-     * Creates a new PivotKickTactic
+     * Creates a new FakePivotKickTactic
      *
      * @param ai_config_ptr shared pointer to ai_config
      */
-    explicit PivotKickTactic(std::shared_ptr<const TbotsProto::AiConfig> ai_config_ptr);
+    explicit FakePivotKickTactic(
+        std::shared_ptr<const TbotsProto::AiConfig> ai_config_ptr);
 
-    PivotKickTactic() = delete;
+    FakePivotKickTactic() = delete;
 
     /**
      * Update control params for this tactic

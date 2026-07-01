@@ -3,7 +3,7 @@
 #include <algorithm>
 
 DribbleTactic::DribbleTactic(std::shared_ptr<const TbotsProto::AiConfig> ai_config_ptr)
-    : TacticBase<DribbleFSM>(
+    : TacticBase<DribbleFSM, LoseBallFSM>(
           {RobotCapability::Move, RobotCapability::Dribble, RobotCapability::Kick},
           ai_config_ptr)
 {

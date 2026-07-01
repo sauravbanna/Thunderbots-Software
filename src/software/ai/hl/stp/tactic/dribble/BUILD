@@ -17,6 +17,7 @@ cc_library(
         "//software/ai/evaluation:time_to_travel",
         "//software/ai/hl/stp/tactic",
         "//software/ai/hl/stp/tactic/move:move_tactic",
+        "//software/ai/hl/stp/tactic/lose_ball:lose_ball_tactic",
         "//software/logger",
     ],
 )

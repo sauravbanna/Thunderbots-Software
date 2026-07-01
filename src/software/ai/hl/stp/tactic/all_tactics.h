@@ -12,6 +12,7 @@
 #include "software/ai/hl/stp/tactic/pass_defender/pass_defender_tactic.h"
 #include "software/ai/hl/stp/tactic/penalty_kick/penalty_kick_tactic.h"
 #include "software/ai/hl/stp/tactic/pivot_kick/pivot_kick_tactic.h"
+#include "software/ai/hl/stp/tactic/fake_pivot_kick/fake_pivot_kick_tactic.h"
 #include "software/ai/hl/stp/tactic/receiver/receiver_tactic.h"
 #include "software/ai/hl/stp/tactic/shadow_enemy/shadow_enemy_tactic.h"
 #include "software/ai/hl/stp/tactic/tactic.h"

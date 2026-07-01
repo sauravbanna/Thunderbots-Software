@@ -26,6 +26,8 @@ void MotionConstraintVisitor::visit(const KickTactic& tactic) {}
 
 void MotionConstraintVisitor::visit(const PivotKickTactic& tactic) {}
 
+void MotionConstraintVisitor::visit(const FakePivotKickTactic& tactic) {}
+
 void MotionConstraintVisitor::visit(const KickoffChipTactic& tactic)
 {
     current_motion_constraints.erase(TbotsProto::MotionConstraint::CENTER_CIRCLE);

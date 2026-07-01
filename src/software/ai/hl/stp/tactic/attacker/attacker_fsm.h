@@ -6,6 +6,7 @@
 #include "software/ai/hl/stp/tactic/chip/chip_fsm.h"
 #include "software/ai/hl/stp/tactic/keep_away/keep_away_fsm.h"
 #include "software/ai/hl/stp/tactic/pivot_kick/pivot_kick_fsm.h"
+#include "software/ai/hl/stp/tactic/fake_pivot_kick/fake_pivot_kick_fsm.h"
 #include "software/ai/hl/stp/tactic/tactic_base.hpp"
 #include "software/ai/passing/pass.h"
 
@@ -43,6 +44,15 @@ struct AttackerFSM : TacticFSM<AttackerFSM>
                    boost::sml::back::process<PivotKickFSM::Update> processEvent);
 
     /**
+     * Action that updates the FakePivotKickFSM to shoot or pass
+     *
+     * @param event AttackerFSM::Update event
+     * @param processEvent processes the FakePivotKickFSM::Update
+     */
+    void fakePivotKick(const Update& event,
+                   boost::sml::back::process<FakePivotKickFSM::Update> processEvent);
+
+    /**
      * Action that updates the KeepAwayFSM to keep the ball away
      *
      * @param event AttackerFSM::Update event
@@ -65,22 +75,22 @@ struct AttackerFSM : TacticFSM<AttackerFSM>
     {
         using namespace boost::sml;
 
-        DEFINE_SML_STATE(PivotKickFSM)
+        DEFINE_SML_STATE(FakePivotKickFSM)
         DEFINE_SML_STATE(KeepAwayFSM)
         DEFINE_SML_STATE(DribbleFSM)
 
         DEFINE_SML_EVENT(Update)
 
         DEFINE_SML_GUARD(shouldKick)
-        DEFINE_SML_SUB_FSM_UPDATE_ACTION(pivotKick, PivotKickFSM)
+        DEFINE_SML_SUB_FSM_UPDATE_ACTION(fakePivotKick, FakePivotKickFSM)
         DEFINE_SML_SUB_FSM_UPDATE_ACTION(keepAway, KeepAwayFSM)
 
         return make_transition_table(
-            *DribbleFSM_S + Update_E[shouldKick_G] / pivotKick_A = PivotKickFSM_S,
+            *DribbleFSM_S + Update_E[shouldKick_G] / fakePivotKick_A = FakePivotKickFSM_S,
             DribbleFSM_S + Update_E[!shouldKick_G] / keepAway_A  = KeepAwayFSM_S,
-            KeepAwayFSM_S + Update_E[shouldKick_G] / pivotKick_A = PivotKickFSM_S,
+            KeepAwayFSM_S + Update_E[shouldKick_G] / fakePivotKick_A = FakePivotKickFSM_S,
             KeepAwayFSM_S + Update_E / keepAway_A, KeepAwayFSM_S    = DribbleFSM_S,
-            PivotKickFSM_S + Update_E / pivotKick_A, PivotKickFSM_S = X,
+            FakePivotKickFSM_S + Update_E / fakePivotKick_A, FakePivotKickFSM_S = X,
             X + Update_E / SET_STOP_PRIMITIVE_ACTION = X);
     }
 };

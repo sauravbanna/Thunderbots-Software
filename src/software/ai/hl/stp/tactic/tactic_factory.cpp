@@ -28,6 +28,7 @@ std::shared_ptr<Tactic> createTactic(
         PROTO_CREATE_TACTIC_CASE(PassDefender, pass_defender)
         PROTO_CREATE_TACTIC_CASE(PenaltyKick, penalty_kick)
         PROTO_CREATE_TACTIC_CASE(PivotKick, pivot_kick)
+        PROTO_CREATE_TACTIC_CASE(FakePivotKick, fake_pivot_kick)
         PROTO_CREATE_TACTIC_CASE(Receiver, receiver)
         PROTO_CREATE_TACTIC_CASE(ShadowEnemy, shadow_enemy)
         PROTO_CREATE_TACTIC_CASE(Halt, halt)
@@ -180,6 +181,17 @@ std::shared_ptr<Tactic> createTactic(
     std::shared_ptr<const TbotsProto::AiConfig> ai_config_ptr)
 {
     auto tactic = std::make_shared<PivotKickTactic>(ai_config_ptr);
+    tactic->updateControlParams(createPoint(tactic_proto.kick_origin()),
+                                createAngle(tactic_proto.kick_direction()),
+                                createAutoChipOrKick(tactic_proto.auto_chip_or_kick()));
+    return tactic;
+}
+
+std::shared_ptr<Tactic> createTactic(
+    const TbotsProto::FakePivotKickTactic& tactic_proto,
+    std::shared_ptr<const TbotsProto::AiConfig> ai_config_ptr)
+{
+    auto tactic = std::make_shared<FakePivotKickTactic>(ai_config_ptr);
     tactic->updateControlParams(createPoint(tactic_proto.kick_origin()),
                                 createAngle(tactic_proto.kick_direction()),
                                 createAutoChipOrKick(tactic_proto.auto_chip_or_kick()));

@@ -3,6 +3,7 @@
 #include "proto/parameters.pb.h"
 #include "shared/constants.h"
 #include "software/ai/evaluation/time_to_travel.h"
+#include "software/ai/hl/stp/tactic/lose_ball/lose_ball_fsm.h"
 #include "software/ai/hl/stp/tactic/move/move_fsm.h"
 #include "software/ai/hl/stp/tactic/tactic_base.hpp"
 #include "software/ai/hl/stp/tactic/transition_conditions.h"
@@ -30,7 +31,6 @@ struct DribbleFSM : TacticFSM<DribbleFSM>
 
     class GetPossession;
     class Dribble;
-    class LoseBall;
 
     /**
      * Constructor for DribbleFSM
@@ -124,11 +124,13 @@ struct DribbleFSM : TacticFSM<DribbleFSM>
     void dribble(const Update& event);
 
     /**
-     * Action to lose possession of the ball
+     * Guard that checks if the robot has lost possession of the ball
      *
      * @param event DribbleFSM::Update
+     *
+     * @return if the ball possession has been lost
      */
-    void loseBall(const Update& event);
+    bool lostPossession(const Update& event);
 
     /**
      * Guard that checks if the robot has possession of the ball
@@ -138,15 +140,6 @@ struct DribbleFSM : TacticFSM<DribbleFSM>
      * @return if the ball has been have_possession
      */
     bool havePossession(const Update& event);
-
-    /**
-     * Guard that checks if the robot has lost possession of the ball
-     *
-     * @param event DribbleFSM::Update
-     *
-     * @return if the ball possession has been lost
-     */
-    bool lostPossession(const Update& event);
 
     /**
      * Guard that checks if the ball is at the dribble_destination and robot is facing
@@ -175,26 +168,23 @@ struct DribbleFSM : TacticFSM<DribbleFSM>
 
         DEFINE_SML_STATE(GetPossession)
         DEFINE_SML_STATE(Dribble)
-        DEFINE_SML_STATE(LoseBall)
         DEFINE_SML_EVENT(Update)
         DEFINE_SML_GUARD(havePossession)
         DEFINE_SML_GUARD(lostPossession)
         DEFINE_SML_GUARD(dribblingDone)
         DEFINE_SML_GUARD(shouldLoseBall)
-        DEFINE_SML_ACTION(loseBall)
         DEFINE_SML_ACTION(getPossession)
         DEFINE_SML_ACTION(dribble)
+        DEFINE_SML_STATE(LoseBallFSM)
 
         return make_transition_table(
             // src_state + event [guard] / action = dest_state
             *GetPossession_S + Update_E[havePossession_G] / dribble_A = Dribble_S,
             GetPossession_S + Update_E[!havePossession_G] / getPossession_A,
-            Dribble_S + Update_E[shouldLoseBall_G] / loseBall_A      = LoseBall_S,
-            Dribble_S + Update_E[lostPossession_G] / getPossession_A = GetPossession_S,
+            Dribble_S + Update_E[shouldLoseBall_G]      = LoseBallFSM_S,
+            LoseBallFSM_S + Update_E / getPossession_A = GetPossession_S,
             Dribble_S + Update_E[!dribblingDone_G] / dribble_A,
             Dribble_S + Update_E[dribblingDone_G] / dribble_A = X,
-            LoseBall_S + Update_E[shouldLoseBall_G] / loseBall_A,
-            LoseBall_S + Update_E[!shouldLoseBall_G] / getPossession_A = GetPossession_S,
             X + Update_E[lostPossession_G] / getPossession_A           = GetPossession_S,
             X + Update_E[!dribblingDone_G] / dribble_A                 = Dribble_S,
             X + Update_E / dribble_A                                   = X);

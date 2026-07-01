@@ -51,6 +51,9 @@ std::shared_ptr<Tactic> createTactic(
     const TbotsProto::PivotKickTactic& tactic_proto,
     std::shared_ptr<const TbotsProto::AiConfig> ai_config_ptr);
 std::shared_ptr<Tactic> createTactic(
+    const TbotsProto::FakePivotKickTactic& tactic_proto,
+    std::shared_ptr<const TbotsProto::AiConfig> ai_config_ptr);
+std::shared_ptr<Tactic> createTactic(
     const TbotsProto::ReceiverTactic& tactic_proto,
     std::shared_ptr<const TbotsProto::AiConfig> ai_config_ptr);
 std::shared_ptr<Tactic> createTactic(

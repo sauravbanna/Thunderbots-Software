@@ -11,7 +11,7 @@
  * Done: When the ball is near the dribbler of the robot and the optional dribble
  * destination and face ball orientation conditions are satisfied
  */
-class DribbleTactic : public TacticBase<DribbleFSM>
+class DribbleTactic : public TacticBase<DribbleFSM, LoseBallFSM>
 {
    public:
     /**

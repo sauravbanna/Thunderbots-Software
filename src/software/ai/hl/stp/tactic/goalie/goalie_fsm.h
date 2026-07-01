@@ -5,6 +5,7 @@
 #include "software/ai/evaluation/calc_best_shot.h"
 #include "software/ai/hl/stp/tactic/chip/chip_fsm.h"
 #include "software/ai/hl/stp/tactic/pivot_kick/pivot_kick_fsm.h"
+#include "software/ai/hl/stp/tactic/fake_pivot_kick/fake_pivot_kick_fsm.h"
 #include "software/ai/hl/stp/tactic/tactic_base.hpp"
 #include "software/geom/algorithms/calculate_block_cone.h"
 #include "software/geom/algorithms/closest_point.h"
@@ -170,6 +171,16 @@ struct GoalieFSM : TacticFSM<GoalieFSM>
                          boost::sml::back::process<PivotKickFSM::Update> processEvent);
 
     /**
+     * Action that updates the FakePivotKickFSM
+     *
+     * @param event GoalieFSM::Update event
+     * @param processEvent processes the PivotKickFSM::Update
+     */
+    void updateFakePivotKick(const Update& event,
+                         boost::sml::back::process<FakePivotKickFSM::Update> processEvent);
+
+
+    /**
      * Action that updates the MovePrimitive to position the goalie in the best spot to
      * block shots.
      *
@@ -190,6 +201,7 @@ struct GoalieFSM : TacticFSM<GoalieFSM>
 
         DEFINE_SML_STATE(Panic)
         DEFINE_SML_STATE(PivotKickFSM)
+        DEFINE_SML_STATE(FakePivotKickFSM)
         DEFINE_SML_STATE(PositionToBlock)
         DEFINE_SML_STATE(MoveToGoalLine)
         DEFINE_SML_STATE(DribbleFSM)
@@ -208,6 +220,7 @@ struct GoalieFSM : TacticFSM<GoalieFSM>
         DEFINE_SML_ACTION(positionToBlock)
         DEFINE_SML_ACTION(moveToGoalLine)
         DEFINE_SML_SUB_FSM_UPDATE_ACTION(updatePivotKick, PivotKickFSM)
+        DEFINE_SML_SUB_FSM_UPDATE_ACTION(updateFakePivotKick, FakePivotKickFSM)
         DEFINE_SML_SUB_FSM_UPDATE_ACTION(retrieveFromDeadZone, DribbleFSM)
 
         return make_transition_table(
@@ -217,10 +230,10 @@ struct GoalieFSM : TacticFSM<GoalieFSM>
             PositionToBlock_S +
                 Update_E[shouldEvacuateCrease_G] / retrieveFromDeadZone_A = DribbleFSM_S,
             PositionToBlock_S + Update_E[shouldPanic_G] / panic_A         = Panic_S,
-            PositionToBlock_S + Update_E[shouldPivotChip_G] / updatePivotKick_A =
-                PivotKickFSM_S,
+            PositionToBlock_S + Update_E[shouldPivotChip_G] / updateFakePivotKick_A =
+                FakePivotKickFSM_S,
             PositionToBlock_S + Update_E / positionToBlock_A,
-            DribbleFSM_S + Update_E[retrieveDone_G] / updatePivotKick_A = PivotKickFSM_S,
+            DribbleFSM_S + Update_E[retrieveDone_G] / updateFakePivotKick_A = FakePivotKickFSM_S,
             DribbleFSM_S + Update_E[shouldMoveToGoalLine_G] / moveToGoalLine_A =
                 MoveToGoalLine_S,
             DribbleFSM_S + Update_E[ballInInflatedDefenseArea_G] / retrieveFromDeadZone_A,
@@ -228,13 +241,13 @@ struct GoalieFSM : TacticFSM<GoalieFSM>
                 PositionToBlock_S,
             Panic_S + Update_E[shouldMoveToGoalLine_G] / moveToGoalLine_A =
                 MoveToGoalLine_S,
-            Panic_S + Update_E[shouldPivotChip_G] / updatePivotKick_A = PivotKickFSM_S,
+            Panic_S + Update_E[shouldPivotChip_G] / updateFakePivotKick_A = FakePivotKickFSM_S,
             Panic_S + Update_E[panicDone_G] / positionToBlock_A       = PositionToBlock_S,
             Panic_S + Update_E / panic_A,
-            PivotKickFSM_S + Update_E[shouldMoveToGoalLine_G] / moveToGoalLine_A =
+            FakePivotKickFSM_S + Update_E[shouldMoveToGoalLine_G] / moveToGoalLine_A =
                 MoveToGoalLine_S,
-            PivotKickFSM_S + Update_E[ballInInflatedDefenseArea_G] / updatePivotKick_A,
-            PivotKickFSM_S + Update_E[!ballInInflatedDefenseArea_G] / positionToBlock_A =
+            FakePivotKickFSM_S + Update_E[ballInInflatedDefenseArea_G] / updateFakePivotKick_A,
+            FakePivotKickFSM_S + Update_E[!ballInInflatedDefenseArea_G] / positionToBlock_A =
                 PositionToBlock_S,
             MoveToGoalLine_S + Update_E[shouldMoveToGoalLine_G] / moveToGoalLine_A =
                 MoveToGoalLine_S,

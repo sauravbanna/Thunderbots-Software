@@ -30,6 +30,7 @@ message Tactic
         ShadowEnemyTactic shadow_enemy                      = 13;
         HaltTactic halt                                     = 14;
         PassDefenderTactic pass_defender                    = 15;
+        FakePivotKickTactic fake_pivot_kick                 = 16;
     }
 }
 
@@ -148,6 +149,16 @@ message PassDefenderTactic
 message PenaltyKickTactic {}
 
 message PivotKickTactic
+{
+    // The location where the kick will be taken from
+    required Point kick_origin = 1;
+    // The direction the Robot will kick in
+    required Angle kick_direction = 2;
+    // How the robot will chip or kick the ball
+    required AutoChipOrKick auto_chip_or_kick = 3;
+}
+
+message FakePivotKickTactic
 {
     // The location where the kick will be taken from
     required Point kick_origin = 1;

@@ -11,7 +11,7 @@
 
 PivotKickTactic::PivotKickTactic(
     std::shared_ptr<const TbotsProto::AiConfig> ai_config_ptr)
-    : TacticBase<PivotKickFSM, DribbleFSM>(
+    : TacticBase<PivotKickFSM, DribbleFSM, LoseBallFSM>(
           {RobotCapability::Move, RobotCapability::Kick, RobotCapability::Chip,
            RobotCapability::Dribble},
           ai_config_ptr)

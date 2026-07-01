@@ -21,6 +21,7 @@ class PassDefenderTactic;
 class PenaltyKickTactic;
 class PenaltySetupTactic;
 class PivotKickTactic;
+class FakePivotKickTactic;
 class ReceiverTactic;
 class ShadowEnemyTactic;
 class HaltTactic;
@@ -63,6 +64,7 @@ class TacticVisitor
     virtual void visit(const PenaltyKickTactic& tactic)          = 0;
     virtual void visit(const PenaltySetupTactic& tactic)         = 0;
     virtual void visit(const PivotKickTactic& tactic)            = 0;
+    virtual void visit(const FakePivotKickTactic& tactic)        = 0;
     virtual void visit(const ReceiverTactic& tactic)             = 0;
     virtual void visit(const ShadowEnemyTactic& tactic)          = 0;
     virtual void visit(const HaltTactic& tactic)                 = 0;

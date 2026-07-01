@@ -44,6 +44,8 @@ message AiConfig
     required ReceiverTacticConfig receiver_tactic_config                    = 14;
     required CreaseDefenderConfig crease_defender_config                    = 15;
     required PassDefenderConfig pass_defender_config                        = 16;
+    required FakePivotKickTacticConfig fake_pivot_kick_tactic_config        = 17;
+    required LoseBallTacticConfig lose_ball_tactic_config                   = 18;
 }
 
 message AiControlConfig
@@ -309,21 +311,32 @@ message GoalieTacticConfig
         [default = 2, (bounds).min_double_value = 0.0, (bounds).max_double_value = 10.0];
 }
 
-message DribbleTacticConfig
+message FakePivotKickTacticConfig 
+{
+    // move back this much from the ball to perform a fake kick (in m)
+    required double move_back_threshold = 1
+        [default = 0.1, (bounds).min_double_value = 0.0, (bounds).max_double_value = 1.0];
+
+}
+
+message LoseBallTacticConfig
 {
     // If ball and front of robot are separated by this amount, then we've lost
     // possession (in m)
     required double lose_ball_possession_threshold = 1
-        [default = 0.1, (bounds).min_double_value = 0.0, (bounds).max_double_value = 1.0];
+        [default = 0.4, (bounds).min_double_value = 0.0, (bounds).max_double_value = 1.0];
+}
 
+message DribbleTacticConfig
+{
     // Threshold to determine if the ball is at the destination determined
     // experimentally (in m)
-    required double ball_close_to_dest_threshold = 2
+    required double ball_close_to_dest_threshold = 1
         [default = 0.1, (bounds).min_double_value = 0.0, (bounds).max_double_value = 1.0];
 
     // Threshold to determine if the robot has the expected orientation when
     // completing the dribble (in degrees)
-    required double final_destination_close_threshold_deg = 3 [
+    required double final_destination_close_threshold_deg = 2 [
         default                   = 3.0,
         (bounds).min_double_value = 0.0,
         (bounds).max_double_value = 10.0
@@ -331,21 +344,21 @@ message DribbleTacticConfig
 
     // Maximum distance to continuously dribble the ball,
     // slightly conservative to not break the 1 meter rule (in m)
-    required double max_continuous_dribbling_distance = 4
+    required double max_continuous_dribbling_distance = 3
         [default = 0.8, (bounds).min_double_value = 0.0, (bounds).max_double_value = 2.0];
 
     // Robot speed at which the robot is done dribbling (in m/s)
-    required double robot_dribbling_done_speed = 5
+    required double robot_dribbling_done_speed = 4
         [default = 1.0, (bounds).min_double_value = 0.0, (bounds).max_double_value = 1.0];
 
     // The maximum amount of additional time that the robot should
     // reach the interception point prior to the ball.
-    required double max_ball_interception_slack_time_sec = 6
+    required double max_ball_interception_slack_time_sec = 5
         [default = 0.1, (bounds).min_double_value = 0.0, (bounds).max_double_value = 1.0];
 
     // The additional offset from the regular ball interception point that the robot
     // should aim for when the robot's dribbler is not aligned with the ball.
-    required double offset_to_ball_when_not_aligned_meters = 7 [
+    required double offset_to_ball_when_not_aligned_meters = 6 [
         default                   = 0.08,
         (bounds).min_double_value = 0.0,
         (bounds).max_double_value = 0.2
@@ -354,11 +367,16 @@ message DribbleTacticConfig
     // The maximum angular velocity the robot can have when it is about to get possession
     // of the ball. This is used to avoid the robot from trying to get possession of the
     // ball when it is turning too fast.
-    required double max_robot_angular_vel_when_getting_possession_deg_per_s = 8 [
+    required double max_robot_angular_vel_when_getting_possession_deg_per_s = 7 [
         default                   = 40.0,
         (bounds).min_double_value = 0.0,
         (bounds).max_double_value = 180.0
     ];
+
+    // If ball and front of robot are separated by this amount, then we've lost
+    // possession (in m)
+    required double lose_ball_possession_threshold = 8
+        [default = 0.4, (bounds).min_double_value = 0.0, (bounds).max_double_value = 1.0];
 }
 
 message EnemyCapabilityConfig
